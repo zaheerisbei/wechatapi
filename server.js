@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-app.get("", async (req, res) => {
+app.get("/", async (req, res) => {
 	console.log(req.query);
 	const { msg_signature, timestamp, nonce, echostr } = req.query;
 	let weToken;
