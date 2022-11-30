@@ -40,6 +40,7 @@ app.get("/", async (req, res) => {
 		res.status(200).send(message);
 	} else {
 		console.log("Unauthorized user")
+		res.status(403).send("Unauthorized user");
 	};
 })
 
