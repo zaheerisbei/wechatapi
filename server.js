@@ -14,17 +14,17 @@ app.use(express.static("public"));
 app.get("/", async (req, res) => {
 	console.log(req.query);
 	const { msg_signature, timestamp, nonce, echostr } = req.query;
-	let weToken;
-	try {
-		const apiResponse = await fetch(
-			'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=wweb89d875de036888&corpsecret=vnVJ01v1uvdPvzoxhi1Ya82KDC4xut6jH9xn_LmU848'
-		);
-		const apiResponseJson = await apiResponse.json()
-		weToken = apiResponseJson.access_token;
-	} catch (err) {
-		console.log(err)
-		res.status(500).send('Something went wrong')
-	}
+	let weToken = 'fdAhCoBdeB1sRdDh4sqorXD7';
+	// try {
+	// 	const apiResponse = await fetch(
+	// 		'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=wweb89d875de036888&corpsecret=vnVJ01v1uvdPvzoxhi1Ya82KDC4xut6jH9xn_LmU848'
+	// 	);
+	// 	const apiResponseJson = await apiResponse.json()
+	// 	weToken = apiResponseJson.access_token;
+	// } catch (err) {
+	// 	console.log(err)
+	// 	res.status(500).send('Something went wrong')
+	// }
 
 	const devSign = getSignature(weToken, timestamp, nonce, echostr);
 	console.log("Dev Singature ", devSign);
@@ -48,7 +48,7 @@ app.get("/", async (req, res) => {
 app.post("", async (req, res) => {
 	console.log(req.query);
 	const { msg_signature, timestamp, nonce, echostr } = req.query;
-	let weToken;
+	let weToken = 'fdAhCoBdeB1sRdDh4sqorXD7';
 	try {
 		const apiResponse = await fetch(
 			'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=wweb89d875de036888&corpsecret=vnVJ01v1uvdPvzoxhi1Ya82KDC4xut6jH9xn_LmU848'
