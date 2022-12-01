@@ -1,7 +1,6 @@
 import express from "express";
 import { decrypt, getSignature } from '@wecom/crypto';
 import bodyParser from "body-parser";
-import fetch from 'node-fetch';
 
 const app = express();
 
@@ -45,20 +44,20 @@ app.get("/", async (req, res) => {
 })
 
 // Posting a new employee
-app.post("", async (req, res) => {
-	console.log(req.query);
+app.post("/", async (req, res) => {
+	console.log('Event Received', req);
 	const { msg_signature, timestamp, nonce, echostr } = req.query;
 	let weToken = 'fdAhCoBdeB1sRdDh4sqorXD7';
-	try {
-		const apiResponse = await fetch(
-			'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=wweb89d875de036888&corpsecret=vnVJ01v1uvdPvzoxhi1Ya82KDC4xut6jH9xn_LmU848'
-		);
-		const apiResponseJson = await apiResponse.json()
-		weToken = apiResponseJson.access_token;
-	} catch (err) {
-		console.log(err)
-		res.status(500).send('Something went wrong')
-	}
+	// try {
+	// 	const apiResponse = await fetch(
+	// 		'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=wweb89d875de036888&corpsecret=vnVJ01v1uvdPvzoxhi1Ya82KDC4xut6jH9xn_LmU848'
+	// 	);
+	// 	const apiResponseJson = await apiResponse.json()
+	// 	weToken = apiResponseJson.access_token;
+	// } catch (err) {
+	// 	console.log(err)
+	// 	res.status(500).send('Something went wrong')
+	// }
 
 	const devSign = getSignature(weToken, timestamp, nonce, echostr);
 	console.log("Dev Singature ", devSign);
@@ -68,9 +67,9 @@ app.post("", async (req, res) => {
 		const encodingAESKey = 'ecFa4cslc2lNetLEUjbH7DcPi8PV9JfaB1xu1IELBTR';
 		// const encodeee = encrypt(encodingAESKey, 'teststring', '123')
 		// console.log('Encoded String: ', encodeee)
-		const { message, id } = decrypt(encodingAESKey, echostr);
+		const message = decrypt(encodingAESKey, echostr);
 
-		console.log({ message, id });
+		console.log(message);
 		res.status(200)
 	} else {
 		console.log("Unauthorized user")
