@@ -49,11 +49,12 @@ app.get("/", async (req, res) => {
 // Posting a new employee
 app.post("/", async (req, res) => {
 	console.log('Event Received', req.query);
-	console.log('Raw XML: ', req.body.xml.encrypt);
+	console.log('Raw XML: ', req.body.xml.encrypt[0]);
 	console.log('Parsed XML: ' + JSON.stringify(req.body));
 	// console.log('JSON output', xmlParser.toJson(`${req.body}`));
 
-	const { msg_signature, timestamp, nonce, echostr } = req.query;
+	const { msg_signature, timestamp, nonce } = req.query;
+	const echostr = req.body.xml.encrypt[0];
 	let weToken = 'fdAhCoBdeB1sRdDh4sqorXD7';
 	// try {
 	// 	const apiResponse = await fetch(
