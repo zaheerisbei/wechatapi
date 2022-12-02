@@ -10,7 +10,8 @@
     "express-xml-bodyparser": "^0.3.0",
     "node-fetch": "^3.3.0",
     "nodemon": "^2.0.20",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "xml2json": "^0.12.0"
   },
   "type": "module"
 }

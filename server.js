@@ -2,6 +2,7 @@ import express from "express";
 import { decrypt, getSignature } from '@wecom/crypto';
 import bodyParser from "body-parser";
 import xmlparser from 'express-xml-bodyparser';
+import xmlParser from 'xml2json';
 
 const app = express();
 
@@ -49,6 +50,8 @@ app.get("/", async (req, res) => {
 app.post("/", async (req, res) => {
 	console.log('Event Received', req.query);
 	console.log('Parsed XML: ' + JSON.stringify(req.body));
+	console.log('JSON output', xmlParser.toJson(req.body));
+
 	const { msg_signature, timestamp, nonce, echostr } = req.query;
 	let weToken = 'fdAhCoBdeB1sRdDh4sqorXD7';
 	// try {
