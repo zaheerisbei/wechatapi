@@ -77,7 +77,7 @@ app.post("/", async (req, res) => {
 		// console.log('Encoded String: ', encodeee)
 		const message = decrypt(encodingAESKey, echostr);
 
-		console.log(message);
+		console.log(message.random.toString());
 		res.status(200)
 	} else {
 		console.log("Unauthorized user")
