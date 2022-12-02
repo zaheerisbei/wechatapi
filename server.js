@@ -1,7 +1,7 @@
 import express from "express";
 import { decrypt, getSignature } from '@wecom/crypto';
 import bodyParser from "body-parser";
-var xmlparser = require('express-xml-bodyparser');
+import xmlparser from 'express-xml-bodyparser';
 
 const app = express();
 
