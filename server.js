@@ -42,47 +42,42 @@ app.get("/", async (req, res) => {
 		res.status(200).send(message);
 	} else {
 		console.log("Unauthorized user")
-		res.status(403).send("Unauthorized user");
+		res.status(401).send("Unauthorized user");
 	};
 })
 
 // Posting a new employee
 app.post("/", async (req, res) => {
 	console.log('Event Received', req.query);
-	console.log('Raw XML: ', req.body.xml.encrypt[0]);
-	console.log('Parsed XML: ' + JSON.stringify(req.body));
+	// console.log('Raw XML: ', req.body.xml.encrypt[0]);
+	// console.log('Parsed XML: ' + JSON.stringify(req.body));
 	// console.log('JSON output', xmlParser.toJson(`${req.body}`));
-
-	const { msg_signature, timestamp, nonce } = req.query;
-	const echostr = req.body.xml.encrypt[0];
-	let weToken = 'fdAhCoBdeB1sRdDh4sqorXD7';
-	// try {
-	// 	const apiResponse = await fetch(
-	// 		'https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=wweb89d875de036888&corpsecret=vnVJ01v1uvdPvzoxhi1Ya82KDC4xut6jH9xn_LmU848'
-	// 	);
-	// 	const apiResponseJson = await apiResponse.json()
-	// 	weToken = apiResponseJson.access_token;
-	// } catch (err) {
-	// 	console.log(err)
-	// 	res.status(500).send('Something went wrong')
-	// }
-
-	const devSign = getSignature(weToken, timestamp, nonce, echostr);
-	console.log("Dev Singature ", devSign);
-
-	if (devSign === msg_signature) {
-		console.log("User is Authorized")
+	if (isAuthorized(req.query)) {
 		const encodingAESKey = 'ecFa4cslc2lNetLEUjbH7DcPi8PV9JfaB1xu1IELBTR';
-		// const encodeee = encrypt(encodingAESKey, 'teststring', '123')
-		// console.log('Encoded String: ', encodeee)
+		const echostr = req.body.xml.encrypt[0];
 		const message = decrypt(encodingAESKey, echostr);
 
-		console.log(message.random.toString());
-		res.status(200)
+		// console.log(message.random.toString());
+		
+		res.status(200).send(message);
 	} else {
-		console.log("Unauthorized user")
+		res.status(401).send('Unauthorised User')
 	};
 })
+
+const isAuthorized = (params) => {
+	const { msg_signature, timestamp, nonce } = params;
+	const echostr = req.body.xml.encrypt[0];
+	let weToken = 'fdAhCoBdeB1sRdDh4sqorXD7';
+	
+	const devSign = getSignature(weToken, timestamp, nonce, echostr);
+
+	if (devSign === msg_signature) {
+		return true;
+	} else {
+		return false
+	}
+}
 
 app.listen(process.env.PORT || 3000, function () {
 	console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
