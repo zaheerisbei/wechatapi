@@ -3,6 +3,10 @@ import { decrypt, getSignature } from '@wecom/crypto';
 import bodyParser from "body-parser";
 import xmlparser from 'express-xml-bodyparser';
 import axios from 'axios';
+import NodeCache from "node-cache";
+
+
+const cache = new NodeCache({ stdTTL: 60 }); // cache items for 60 
 
 const app = express();
 
@@ -51,6 +55,7 @@ app.post("/", async (req, res) => {
 		let accessToken = cache.get("access_token");
 		if (!accessToken) {
 			// if the access token is not in the cache, fetch a new one
+			console.log("Fetching new token");
 			accessToken = await fetchAccessToken();
 			cache.set("access_token", accessToken);
 		}
