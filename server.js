@@ -52,7 +52,7 @@ app.post("/", async (req, res) => {
 	// console.log('Raw XML: ', req.body.xml.encrypt[0]);
 	// console.log('Parsed XML: ' + JSON.stringify(req.body));
 	// console.log('JSON output', xmlParser.toJson(`${req.body}`));
-	if (isAuthorized(req.query)) {
+	if (isAuthorized(req)) {
 		const encodingAESKey = 'ecFa4cslc2lNetLEUjbH7DcPi8PV9JfaB1xu1IELBTR';
 		const echostr = req.body.xml.encrypt[0];
 		const message = decrypt(encodingAESKey, echostr);
@@ -65,8 +65,8 @@ app.post("/", async (req, res) => {
 	};
 })
 
-const isAuthorized = (params) => {
-	const { msg_signature, timestamp, nonce } = params;
+const isAuthorized = (req) => {
+	const { msg_signature, timestamp, nonce } = req.query;
 	const echostr = req.body.xml.encrypt[0];
 	let weToken = 'fdAhCoBdeB1sRdDh4sqorXD7';
 	
