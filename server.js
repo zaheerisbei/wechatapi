@@ -57,7 +57,7 @@ app.post("/", async (req, res) => {
 		const echostr = req.body.xml.encrypt[0];
 		const message = decrypt(encodingAESKey, echostr);
 
-		// console.log(message.random.toString());
+		console.log(message);
 		
 		res.status(200).send(message);
 	} else {
