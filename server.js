@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import xmlparser from 'express-xml-bodyparser';
 import axios from 'axios';
 import NodeCache from "node-cache";
-
+import fetch from "node-fetch";
 
 const cache = new NodeCache({ stdTTL: 60 }); // cache items for 60 
 
