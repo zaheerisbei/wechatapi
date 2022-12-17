@@ -83,10 +83,6 @@ app.post("/", async (req, res) => {
 			
 			console.log("Result", response.data);
 			cache.set("cursor", response.data.next_cursor)
-			if(response.data.next_cursor  === res.get("cursor")) {
-				res.status(200)
-				return;
-			}
 			res.status(200);
 		} catch (err) {
 			console.log("Error", err);
