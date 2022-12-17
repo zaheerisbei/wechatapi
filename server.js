@@ -80,6 +80,10 @@ app.post("/", async (req, res) => {
 				"open_kfid": jsonMsg.xml.OpenKfId,
 				"cursor": cache.get("cursor")
 			});
+			if(response.data.next_cursor  === res.get("cursor")) {
+				res.status(200)
+				return;
+			}
 			console.log("Result", response.data);
 			cache.set("cursor", response.data.next_cursor)
 			res.status(200);
