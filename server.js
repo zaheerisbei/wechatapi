@@ -2,6 +2,7 @@ import express from "express";
 import { decrypt, getSignature } from '@wecom/crypto';
 import bodyParser from "body-parser";
 import xmlparser from 'express-xml-bodyparser';
+import xmlParser from 'xml2json';
 import axios from 'axios';
 import NodeCache from "node-cache";
 import fetch from "node-fetch";
@@ -40,6 +41,16 @@ app.get("/", async (req, res) => {
 	};
 })
 
+app.get('/test', (req, res) => {
+	const message = {
+		message: '<xml><ToUserName><![CDATA[wweb89d875de036888]]></ToUserName><CreateTime>1671216718</CreateTime><MsgType><![CDATA[event]]></MsgType><Event><![CDATA[kf_msg_or_event]]></Event><Token><![CDATA[ENCFMjVBy8fXBi5t6rR6bZfyYWw9oXwHx7ck8E4RkeU2MDP]]></Token><OpenKfId><![CDATA[wkA816UQAANyEz3O8fUwfiGQelx4VF_w]]></OpenKfId></xml>'
+	}
+	const jsonMsg = JSON.parse(xmlParser.toJson(`${message.message}`));
+	console.log('JSON msg', jsonMsg.xml.OpenKfId);
+
+	res.status(200)
+})
+
 // Posting a new employee
 app.post("/", async (req, res) => {
 	console.log('Event Received', req.query);
@@ -47,9 +58,10 @@ app.post("/", async (req, res) => {
 	// console.log('Parsed XML: ' + JSON.stringify(req.body));
 	// console.log('JSON output', xmlParser.toJson(`${req.body}`));
 	if (isAuthorized(req)) {
-		// const encodingAESKey = 'ecFa4cslc2lNetLEUjbH7DcPi8PV9JfaB1xu1IELBTR';
-		// const echostr = req.body.xml.encrypt[0];
-		// const message = decrypt(encodingAESKey, echostr);
+		const encodingAESKey = 'ecFa4cslc2lNetLEUjbH7DcPi8PV9JfaB1xu1IELBTR';
+		const echostr = req.body.xml.encrypt[0];
+		const message = decrypt(encodingAESKey, echostr);
+		const jsonMsg = JSON.parse(xmlParser.toJson(`${message.message}`));
 
 		// console.log(message);
 		let accessToken = cache.get("access_token");
@@ -62,9 +74,11 @@ app.post("/", async (req, res) => {
 
 		try {
 			const response = await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg?access_token=${accessToken}`, {
-				"open_kfid": "wkA816UQAANyEz3O8fUwfiGQelx4VF_w"
+				"open_kfid": jsonMsg.xml.OpenKfId,
+				"cursor": res.get("cursor")
 			});
 			console.log("Result", response.data);
+			cache.set("cursor", response.data.next_cursor)
 			res.status(200);
 		} catch (err) {
 			console.log("Error", err);
