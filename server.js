@@ -73,19 +73,14 @@ app.post("/", async (req, res) => {
 		}
 
 		console.log("OPEN_KFID", jsonMsg.xml.OpenKfId);
-		console.log("Cursor: ", res.get("cursor"))
+		console.log("Cursor: ", cache.get("cursor"))
 
 		try {
 			const response = await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg?access_token=${accessToken}`, {
 				"open_kfid": jsonMsg.xml.OpenKfId,
-				"cursor": res.get("cursor")
+				"cursor": cache.get("cursor")
 			});
-			if(response.data.next_cursor  === res.get("cursor")) {
-				res.status(200)
-				return;
-			}
 			console.log("Result", response.data);
-			console.log("Cursor Value: ", response.data.next_cursor)
 			cache.set("cursor", response.data.next_cursor)
 			res.status(200);
 		} catch (err) {
