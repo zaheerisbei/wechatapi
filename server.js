@@ -85,6 +85,7 @@ app.post("/", async (req, res) => {
 				return;
 			}
 			console.log("Result", response.data);
+			console.log("Cursor Value: ", response.data.next_cursor)
 			cache.set("cursor", response.data.next_cursor)
 			res.status(200);
 		} catch (err) {
