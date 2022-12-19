@@ -63,13 +63,13 @@ app.post("/", async (req, res) => {
 		const jsonMsg = JSON.parse(xmlParser.toJson(`${message.message}`));
 
 		// console.log(message);
-		let accessToken = cache.get("access_token");
-		if (!accessToken) {
-			// if the access token is not in the cache, fetch a new one
-			console.log("Fetching new token");
-			accessToken = await fetchAccessToken();
-			cache.set("access_token", accessToken);
-		}
+		// let accessToken = cache.get("access_token");
+		// if (!accessToken) {
+		// 	// if the access token is not in the cache, fetch a new one
+		// 	console.log("Fetching new token");
+		// 	accessToken = await fetchAccessToken();
+		// 	cache.set("access_token", accessToken);
+		// }
 
 		console.log("Event Received: ", jsonMsg.xml);
 		// console.log("Cursor: ", cache.get("cursor"))
@@ -87,6 +87,7 @@ app.post("/", async (req, res) => {
 		// 	console.log("Error", err);
 		// 	res.status(400);
 		// }
+		res.status(200).send('')
 	} else {
 		res.status(401).send('Unauthorised User')
 	};
