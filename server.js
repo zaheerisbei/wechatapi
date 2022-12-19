@@ -91,8 +91,6 @@ app.post("/", async (req, res) => {
 					})
 				}
 			})
-
-				.event.welcome_code
 			cache.set("cursor", response.data.next_cursor)
 			res.status(200).send('');
 		} catch (err) {
