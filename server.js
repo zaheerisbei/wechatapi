@@ -93,7 +93,7 @@ app.post("/", async (req, res) => {
 					} else if (k.event.event_type === 'servicer_status_change') {
 						const result = await axios.get(`https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/list?access_token=${accessToken}&open_kfid=${k.open_kfid}`)
 						cache.set('agents', result.data.servicer_list);
-						console.log('Updated Agents List: ', cache.get('agents'));
+						console.log('Updated Agents List: ', result.data.servicer_list);
 					} 
 				}
 			})
