@@ -81,7 +81,7 @@ app.post("/", async (req, res) => {
 
 			console.log("Result", JSON.stringify(response.data));
 			response.data.msg_list.map(async (k) => {
-				if (k.event.welcome_code) {
+				if (k.event !== undefined && k.event.welcome_code !== undefined) {
 					await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg_on_event?access_token=${accessToken}`, {
 						"code": k.event.welcome_code,
 						"msgtype": "text",
