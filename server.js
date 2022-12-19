@@ -7,7 +7,7 @@ import axios from 'axios';
 import NodeCache from "node-cache";
 import fetch from "node-fetch";
 
-const cache = new NodeCache({ stdTTL: 60 }); // cache items for 60 
+const cache = new NodeCache({ stdTTL: 7200 }); // cache items for 60 
 
 const app = express();
 
@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 app.use(xmlparser());
 app.use(express.static("public"));
 
+// Authorize Receiving Server
 app.get("/", async (req, res) => {
 	console.log(req.query);
 	const { msg_signature, timestamp, nonce, echostr } = req.query;
@@ -29,8 +30,6 @@ app.get("/", async (req, res) => {
 	if (devSign === msg_signature) {
 		console.log("User is Authorized")
 		const encodingAESKey = 'ecFa4cslc2lNetLEUjbH7DcPi8PV9JfaB1xu1IELBTR';
-		// const encodeee = encrypt(encodingAESKey, 'teststring', '123')
-		// console.log('Encoded String: ', encodeee)
 		const { message, id } = decrypt(encodingAESKey, echostr);
 
 		console.log({ message, id });
@@ -51,9 +50,9 @@ app.get('/test', (req, res) => {
 	res.status(200)
 })
 
-// Posting a new employee
+// Receiving Events
 app.post("/", async (req, res) => {
-	console.log('Event Received', req.query);
+	// console.log('Event Received', req.query);
 	// console.log('Raw XML: ', req.body.xml.encrypt[0]);
 	// console.log('Parsed XML: ' + JSON.stringify(req.body));
 	// console.log('JSON output', xmlParser.toJson(`${req.body}`));
@@ -72,22 +71,22 @@ app.post("/", async (req, res) => {
 			cache.set("access_token", accessToken);
 		}
 
-		console.log("OPEN_KFID", jsonMsg.xml.OpenKfId);
-		console.log("Cursor: ", cache.get("cursor"))
+		console.log("Event Received: ", jsonMsg.xml);
+		// console.log("Cursor: ", cache.get("cursor"))
 
-		try {
-			const response = await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg?access_token=${accessToken}`, {
-				"open_kfid": jsonMsg.xml.OpenKfId,
-				"cursor": cache.get("cursor")
-			});
+		// try {
+		// 	const response = await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg?access_token=${accessToken}`, {
+		// 		"open_kfid": jsonMsg.xml.OpenKfId,
+		// 		"cursor": cache.get("cursor")
+		// 	});
 			
-			console.log("Result", response.data);
-			cache.set("cursor", response.data.next_cursor)
-			res.status(200);
-		} catch (err) {
-			console.log("Error", err);
-			res.status(400);
-		}
+		// 	console.log("Result", response.data);
+		// 	cache.set("cursor", response.data.next_cursor)
+		// 	res.status(200);
+		// } catch (err) {
+		// 	console.log("Error", err);
+		// 	res.status(400);
+		// }
 	} else {
 		res.status(401).send('Unauthorised User')
 	};
