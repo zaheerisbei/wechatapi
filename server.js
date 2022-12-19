@@ -78,8 +78,21 @@ app.post("/", async (req, res) => {
 				"open_kfid": jsonMsg.xml.OpenKfId,
 				"cursor": cache.get("cursor")
 			});
-			
+
 			console.log("Result", JSON.stringify(response.data));
+			response.data.msg_list.map(async (k) => {
+				if (k.event.welcome_code) {
+					await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg_on_event?access_token=${accessToken}`, {
+						"code": k.event.welcome_code,
+						"msgtype": "text",
+						"text": {
+							"content": "Welcome to Isbei Customer Service. Please wait for an agent!"
+						}
+					})
+				}
+			})
+
+				.event.welcome_code
 			cache.set("cursor", response.data.next_cursor)
 			res.status(200).send('');
 		} catch (err) {
