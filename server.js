@@ -62,32 +62,30 @@ app.post("/", async (req, res) => {
 		const message = decrypt(encodingAESKey, echostr);
 		const jsonMsg = JSON.parse(xmlParser.toJson(`${message.message}`));
 
-		// console.log(message);
-		// let accessToken = cache.get("access_token");
-		// if (!accessToken) {
-		// 	// if the access token is not in the cache, fetch a new one
-		// 	console.log("Fetching new token");
-		// 	accessToken = await fetchAccessToken();
-		// 	cache.set("access_token", accessToken);
-		// }
+		let accessToken = cache.get("access_token");
+		if (!accessToken) {
+			// if the access token is not in the cache, fetch a new one
+			console.log("Fetching new token");
+			accessToken = await fetchAccessToken();
+			cache.set("access_token", accessToken);
+		}
 
 		console.log("Event Received: ", jsonMsg.xml);
 		// console.log("Cursor: ", cache.get("cursor"))
 
-		// try {
-		// 	const response = await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg?access_token=${accessToken}`, {
-		// 		"open_kfid": jsonMsg.xml.OpenKfId,
-		// 		"cursor": cache.get("cursor")
-		// 	});
+		try {
+			const response = await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/sync_msg?access_token=${accessToken}`, {
+				"open_kfid": jsonMsg.xml.OpenKfId,
+				"cursor": cache.get("cursor")
+			});
 			
-		// 	console.log("Result", response.data);
-		// 	cache.set("cursor", response.data.next_cursor)
-		// 	res.status(200);
-		// } catch (err) {
-		// 	console.log("Error", err);
-		// 	res.status(400);
-		// }
-		res.status(200).send('')
+			console.log("Result", JSON.stringify(response.data));
+			cache.set("cursor", response.data.next_cursor)
+			res.status(200).send('');
+		} catch (err) {
+			console.log("Error", err);
+			res.status(400).send('');
+		}
 	} else {
 		res.status(401).send('Unauthorised User')
 	};
