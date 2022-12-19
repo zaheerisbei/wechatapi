@@ -81,14 +81,20 @@ app.post("/", async (req, res) => {
 
 			console.log("Result", JSON.stringify(response.data));
 			response.data.msg_list.map(async (k) => {
-				if (k.event !== undefined && k.event.welcome_code !== undefined) {
-					await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg_on_event?access_token=${accessToken}`, {
+				if (k.event) {
+					if(k.event.welcome_code) {
+						await axios.post(`https://qyapi.weixin.qq.com/cgi-bin/kf/send_msg_on_event?access_token=${accessToken}`, {
 						"code": k.event.welcome_code,
 						"msgtype": "text",
 						"text": {
 							"content": "Welcome to Isbei Customer Service. Please wait for an agent!"
 						}
 					})
+					} else if (k.event.event_type === 'servicer_status_change') {
+						const result = await axios.get(`https://qyapi.weixin.qq.com/cgi-bin/kf/servicer/list?access_token=${accessToken}&open_kfid=${k.open_kfid}`)
+						cache.set('agents', result.data.servicer_list);
+						console.log('Updated Agents List: ', cache.get('agents'));
+					} 
 				}
 			})
 			cache.set("cursor", response.data.next_cursor)
