@@ -57,12 +57,13 @@ app.post("/", async (req, res) => {
 	// console.log('Parsed XML: ' + JSON.stringify(req.body));
 	// console.log('JSON output', xmlParser.toJson(`${req.body}`));
 	if (isAuthorized(req)) {
-		console.log('Query: ', JSON.stringify(req.query));
-		console.log('Body: ', JSON.stringify(req.body));
-		console.log('XML: ', JSON.stringify(req.body.xml));
+		// console.log('Query: ', JSON.stringify(req.query));
+		// console.log('Body: ', JSON.stringify(req.body));
+		// console.log('XML: ', JSON.stringify(req.body.xml));
 		const encodingAESKey = 'ecFa4cslc2lNetLEUjbH7DcPi8PV9JfaB1xu1IELBTR';
 		const echostr = req.body.xml.encrypt[0];
 		const message = decrypt(encodingAESKey, echostr);
+		console.log('Decrypted: ', JSON.stringify(message))
 		const jsonMsg = JSON.parse(xmlParser.toJson(`${message.message}`));
 
 		let accessToken = cache.get("access_token");
